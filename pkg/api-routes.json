@@ -1,0 +1,155 @@
+{
+  "/": {
+    "url": "/",
+    "desc": "Пересылка на другую страницу с получением initData",
+    "method": "GET"
+  },
+  "/main": {
+    "url": "/main",
+    "desc": "Главная страница. Выполняет только рендер",
+    "method": "GET",
+    "url-query": {
+      "initData": "string"
+    }
+  },
+
+  "/get/groups": {
+    "url": "/get/groups",
+    "desc": "Возвращает все существующие группы.",
+    "method": "POST",
+    "request": {
+      "body": {
+        "initData": "string"
+      }
+    },
+    "response": {
+      "body": {
+        "groups": [{ "id": "value", "name": "value", "title": "value" }],
+        "consists-of": "int"
+      }
+    }
+  },
+  "/get/my-groups": {
+    "url": "/get/my-groups",
+    "desc": "Возвращает все группы, которыми владеет пользователь",
+    "method": "POST",
+    "request": {
+      "body": {
+        "initData": "string"
+      }
+    },
+    "response": {
+      "body": {
+        "groups": ["id", "name", "title"],
+        "consists-of": "int"
+      }
+    }
+  },
+  "/get/group-schedule": {
+    "url": "/get/group-schedule",
+    "desc": "Возвращает расписание группы.",
+    "method": "POST",
+    "request": {
+      "body": {
+        "initData": "string",
+        "group-id": "int"
+      }
+    },
+    "response": {
+      "body": {
+        "holder_id": "int",
+
+        "name": "string",
+        "title": "string",
+
+        "is_alternating_group": "bool",
+        "start_date": "string",
+        "even_week": "JSONB[]",
+        "odd_week": "JSONB[]"
+      }
+    }
+  },
+
+  "/set/group-schedule": {
+    "url": "/set/group-schedule",
+    "desc": "Устанавливает расписание для группы. Группа предварительно должна быть создана.",
+    "method": "POST",
+    "request": {
+      "body": {
+        "initData": "string",
+
+        "type": "string (save or create)",
+        "group_id": "int",
+
+        "holder_id": "int",
+
+        "name": "string",
+        "title": "string",
+
+        "is_alternating_group": "bool",
+        "start_date": "string",
+        "even_week": "JSONB[]",
+        "odd_week": "JSONB[]"
+      }
+    },
+    "response": {
+      "body": {
+        "status": "bool",
+        "message": "string"
+      }
+    }
+  },
+
+  "/group/join": {
+    "url": "/group/join",
+    "desc": "Пользователь вступает в группу по ID. Если пользователь в составе другой группы, то отказ",
+    "method": "POST",
+    "request": {
+      "body": {
+        "initData": "string",
+        "join-to": "int"
+      }
+    },
+    "response": {
+      "body": {
+        "status": "bool",
+        "message": "string"
+      }
+    }
+  },
+  "/group/exit": {
+    "url": "/group/exit",
+    "desc": "Пользователь выходит из группы.",
+    "method": "POST",
+    "request": {
+      "body": {
+        "initData": "string"
+      }
+    },
+    "response": {
+      "body": {
+        "status": "bool",
+        "message": "string"
+      }
+    }
+  },
+
+  "/group/exit-and-join": {
+    "url": "/group/exit",
+    "desc": "Пользователь выходит из группы и вступает в другую",
+    "method": "POST",
+    "request": {
+      "body": {
+        "initData": "string",
+        "join-to": "int",
+        "exit-from": "int"
+      }
+    },
+    "response": {
+      "body": {
+        "status": "bool",
+        "message": "string"
+      }
+    }
+  }
+}

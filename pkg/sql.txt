@@ -1,0 +1,47 @@
+-- Таблица для пользователей
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+
+    tg_user_id BIGINT NOT NULL UNIQUE,
+    consists_of INTEGER,
+    first_name VARCHAR(255),
+    second_name VARCHAR(255),
+    user_name VARCHAR(255),
+    
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP WITH TIME ZONE
+);
+
+-- Таблица групп и их расписания и владельца
+CREATE TABLE IF NOT EXISTS groups (
+    id SERIAL PRIMARY KEY,
+    holder_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    
+    name VARCHAR(255) NOT NULL,
+    title VARCHAR(255),
+
+    start_date DATE,
+    is_alternating_group BOOLEAN DEFAULT FALSE,
+    even_week JSONB NOT NULL,
+    odd_week JSONB NOT NULL,
+
+
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP WITH TIME ZONE
+);
+
+-- Таблица для контролирования состава групп
+CREATE TABLE IF NOT EXISTS  structure_of_group (
+    id SERIAL PRIMARY KEY,
+    group_id INTEGER REFERENCES groups(id) ON DELETE CASCADE,
+    structure BIGINT[],
+
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP WITH TIME ZONE
+);
+
+
+--CREATE INDEX IF NOT EXISTS idx_groups_holder_id ON groups(holder_id);
