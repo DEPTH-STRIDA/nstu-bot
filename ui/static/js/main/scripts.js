@@ -18,10 +18,12 @@ document.addEventListener("DOMContentLoaded", function () {
   // Загрузка всех групп
   SetGroups();
 
+  // Установка кнопок
   setupGlobalClickListener();
 });
 
 function setupGlobalClickListener() {
+  // Слушатель клика по  всему документу
   document.addEventListener("click", function (event) {
     const clickedElement = event.target;
 
@@ -41,24 +43,39 @@ function setupGlobalClickListener() {
       case "group-card":
         handleGroupCardClick(targetElement, clickedElement);
         break;
-      case "user-profile":
-        // handleUserProfileClick(targetElement);
+      case "join-group":
+        handleGroupButton(targetElement);
         break;
-      case "notification":
-        // handleNotificationClick(targetElement);
-        break;
-      case "chat-message":
-        // handleChatMessageClick(targetElement);
-        break;
+      // case "notification":
+      //   // handleNotificationClick(targetElement);
+      //   break;
+      // case "chat-message":
+      //   // handleChatMessageClick(targetElement);
+      //   break;
       default:
         console.log("Неизвестный тип элемента:", elementType);
     }
   });
 }
 
+function handleGroupButton(button) {
+  function HandleEnter(groupButtonId) {}
+  function HandleExit(groupButtonId) {}
+
+  // Читаем значение атрибута group_button_id
+  let groupButtonIdStr = button.getAttribute("group_button_id");
+  // Преобразуем строку в целое число
+  let groupButtonId = parseInt(groupButtonIdStr, 10);
+  let buttonText = button.textContent;
+
+  if (buttonText == "Вступить") {
+  } else if (buttonText == "Выйти") {
+  }
+}
+
 function SetGroups() {
   // Вставка html блоков в DOM
-  function SetHtmlCards(groups) {
+  function SetHtmlCards(groups, consist_of) {
     const targetElement = document.getElementById("cards-placeholder");
 
     // Очищаем содержимое целевого элемента перед добавлением новых карточек
@@ -69,13 +86,19 @@ function SetGroups() {
         `ID: ${group.id}, Name: ${group.name}, Title: ${group.title}`
       );
 
-      const htmlString = `
-        <div class="group-card" group-id="${group.id}">
-          <img class="member-img" src="/static/img/member.svg" alt="" />
-          <h2 class="group-name">${group.name}</h2>
+      let htmlString = `
+        <div class="group-card" group-id="${group.id}">`;
+
+      let buttonMsg = "Вступить";
+      if (consist_of == group.id) {
+        htmlString += `<img class="member-img" src="/static/img/member.svg" alt="" />`;
+        buttonMsg = "Выйти";
+      }
+
+      htmlString += `<h2 class="group-name">${group.name}</h2>
           <div class="divider"></div>
           <h2 class="desc">${group.title}</h2>
-          <button class="join-group" id="enter-button" action_type="enter" group_button_id="${group.id}">Вступить</button>
+          <button class="join-group" id="enter-button" group_button_id="${group.id}">${buttonMsg}</button>
         </div>
       `;
 
@@ -95,8 +118,70 @@ function SetGroups() {
           const jsonResponse = JSON.parse(responseBody);
           console.log("Распарсенный JSON:", jsonResponse);
 
-          SetHtmlCards(jsonResponse["groups"]);
-          consist_of = jsonResponse["onsists-of"];
+          SetHtmlCards(jsonResponse["groups"], jsonResponse["onsists-of"]);
+        } catch (e) {
+          console.log("Ответ не является валидным JSON");
+        }
+      } else {
+        // Запрос завершился с ошибкой
+        console.log(
+          "Ошибка:",
+          result.response.status,
+          result.response.statusText
+        );
+      }
+    })
+    .catch((error) => {
+      console.error("Произошла ошибка:", error);
+    });
+}
+
+function SetMyGroups() {
+  // Вставка html блоков в DOM
+  function SetHtmlCards(groups, consist_of) {
+    const targetElement = document.getElementById("cards-placeholder");
+
+    // Очищаем содержимое целевого элемента перед добавлением новых карточек
+    targetElement.innerHTML = "";
+
+    for (const group of groups) {
+      console.log(
+        `ID: ${group.id}, Name: ${group.name}, Title: ${group.title}`
+      );
+
+      let htmlString = `
+        <div class="group-card" group-id="${group.id}">`;
+      let buttonMsg = "Вступить";
+      if (consist_of == group.id) {
+        htmlString += `<img class="member-img" src="/static/img/member.svg" alt="" />`;
+        buttonMsg = "Выйти";
+      }
+
+      htmlString += `<h2 class="group-name">${group.name}</h2>
+          <div class="divider"></div>
+          <h2 class="desc">${group.title}</h2>
+          <button class="join-group" id="enter-button" action_type="enter" group_button_id="${group.id}">${buttonMsg}</button>
+          <button class="edit-group">Редактировать</button>
+          </div>
+      `;
+
+      targetElement.insertAdjacentHTML("beforeend", htmlString);
+    }
+  }
+
+  sendPostRequestAsync("/get/my-groups", JSON.stringify({ initData: initData }))
+    .then((result) => {
+      if (result.success) {
+        // Успешный запрос
+        const responseBody = result.response.responseText;
+        console.log("Тело ответа:", responseBody);
+
+        // Если ответ в формате JSON, вы можете распарсить его:
+        try {
+          const jsonResponse = JSON.parse(responseBody);
+          console.log("Распарсенный JSON:", jsonResponse);
+
+          SetHtmlCards(jsonResponse["groups"], jsonResponse["onsists-of"]);
         } catch (e) {
           console.log("Ответ не является валидным JSON");
         }

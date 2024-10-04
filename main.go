@@ -4,6 +4,7 @@ import (
 	"nstu/internal/logger"
 	"nstu/internal/models"
 	"nstu/internal/tg"
+	"nstu/internal/web"
 )
 
 func main() {
@@ -13,9 +14,13 @@ func main() {
 
 	bot, err := tg.InitTgBNot()
 	handleErr(err)
-	bot.HandleUpdates()
+	go bot.HandleUpdates()
 	tg.Bot = bot
 
+	webApp, err := web.NewWebApp()
+	handleErr(err)
+
+	handleErr(webApp.HandleUpdates())
 }
 
 // handleErr проверяет наличие ошибки. В случае наличия ошикби, логгирует ее и останавливает программу.

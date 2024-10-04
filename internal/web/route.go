@@ -14,7 +14,7 @@ func (app *WebApp) SetRoutes() *mux.Router {
 	router.Use(LimitMiddleware)
 
 	router.HandleFunc("/", app.HandleValidate).Methods("GET")
-	router.HandleFunc("/main", InitDataValidation(app.HandleMain)).Methods("POST")
+	router.HandleFunc("/main", InitDataValidation(app.HandleMain)).Methods("GET")
 
 	router.HandleFunc("/get/groups", InitDataValidation(app.HandleGetGroups)).Methods("POST")
 	router.HandleFunc("/get/my-groups", InitDataValidation(app.HandleGetMyGroups)).Methods("POST")
