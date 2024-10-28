@@ -1,70 +1,29 @@
 package tg
 
 import (
-	"errors"
+	"app/internal/logger"
+	"app/internal/model"
 	"fmt"
-	"nstu/internal/logger"
-	"regexp"
 	"sync"
-	"time"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func ParseDate(input string) (time.Time, error) {
-	if len(input) > 15 {
-		return time.Time{}, errors.New("входная строка слишком длинная")
-	}
-
-	// Извлекаем только цифры
-	reg := regexp.MustCompile(`\d+`)
-	numbers := reg.FindAllString(input, -1)
-
-	if len(numbers) < 2 || len(numbers) > 3 {
-		return time.Time{}, errors.New("неверный формат даты")
-	}
-
-	day := numbers[0]
-	month := numbers[1]
-	year := ""
-
-	if len(numbers) == 3 {
-		year = numbers[2]
-	}
-
-	// Проверяем, что день и месяц двузначные
-	if len(day) != 2 || len(month) != 2 {
-		return time.Time{}, errors.New("день и месяц должны быть двузначными")
-	}
-
-	currentYear := time.Now().Year()
-
-	// Если год не указан или указан не полностью, используем текущий
-	if year == "" || len(year) != 4 {
-		year = fmt.Sprintf("%04d", currentYear)
-	}
-
-	// Собираем дату в формате "02-01-2006"
-	dateStr := fmt.Sprintf("%s-%s-%s", day, month, year)
-
-	// Парсим дату
-	date, err := time.Parse("02-01-2006", dateStr)
+// HandleErrorWithTg печатает ошибку, отправляет админам в тг, возвращает ее в случае ее наличия
+func (app *Bot) HandleErrorWithTg(err error) error {
 	if err != nil {
-		return time.Time{}, errors.New("неверная дата")
-	}
+		logger.Log.Error(err)
 
-	// Если указан только день и месяц, и получившаяся дата в прошлом,
-	// добавляем один год
-	if len(numbers) == 2 && date.Before(time.Now()) {
-		date = date.AddDate(1, 0, 0)
-	}
+		app.SendAllAdmins("<strong>🚨Ошибка приложения</strong>\n" + err.Error())
 
-	return date, nil
+		return err
+	}
+	return nil
 }
 
 // SendMessageRepet делает несколько попыток отправки сообщений.
 // Останавливает попытки после первой успешной.
-func (app *BotStruct) SendMessageRepet(msg tgbotapi.MessageConfig, numberRepetion int) (tgbotapi.Message, error) {
+func (app *Bot) SendMessageRepet(msg tgbotapi.MessageConfig, numberRepetion int) (tgbotapi.Message, error) {
 	for i := 0; i < numberRepetion; i++ {
 		sendedMsg, err := app.SendMessage(msg)
 		if err != nil {
@@ -77,7 +36,7 @@ func (app *BotStruct) SendMessageRepet(msg tgbotapi.MessageConfig, numberRepetio
 }
 
 // SendMessage синхронная функция для отправки сообщения
-func (app *BotStruct) SendMessage(msg tgbotapi.MessageConfig) (tgbotapi.Message, error) {
+func (app *Bot) SendMessage(msg tgbotapi.MessageConfig) (tgbotapi.Message, error) {
 	sendedMsg, err := app.sendMessage(msg)
 	if err != nil {
 		return sendedMsg, err
@@ -86,7 +45,7 @@ func (app *BotStruct) SendMessage(msg tgbotapi.MessageConfig) (tgbotapi.Message,
 }
 
 // sendMessage асинхронная функция, которая с помощью waitgroup дожидается результатов от отправки сообщения
-func (app *BotStruct) sendMessage(msg tgbotapi.MessageConfig) (tgbotapi.Message, error) {
+func (app *Bot) sendMessage(msg tgbotapi.MessageConfig) (tgbotapi.Message, error) {
 	var sendedMsg tgbotapi.Message
 	var err error
 
@@ -98,7 +57,7 @@ func (app *BotStruct) sendMessage(msg tgbotapi.MessageConfig) (tgbotapi.Message,
 		defer wg.Done()
 
 		// Устанавливаем глобальные параметры
-		sendedMsg, err = app.Send(msg)
+		sendedMsg, err = app.botAPI.Send(msg)
 		if err != nil {
 			return err
 		}
@@ -110,7 +69,124 @@ func (app *BotStruct) sendMessage(msg tgbotapi.MessageConfig) (tgbotapi.Message,
 	return sendedMsg, err
 }
 
-func (app *BotStruct) EditMessageRepet(editMsg tgbotapi.EditMessageTextConfig, numberRepetion int) (*tgbotapi.APIResponse, error) {
+// SendPinMessageEvent синхронная функция для отправки события на закрепление сообщения
+func (app *Bot) SendPinMessageEvent(messageID int, ChatID int64, disableNotification bool) (*tgbotapi.APIResponse, error) {
+	APIResponse, err := app.sendPinMessageEvent(messageID, ChatID, disableNotification)
+	if err != nil {
+		return APIResponse, err
+	}
+	return APIResponse, nil
+}
+
+// sendPinMessageEvent асинхронная функция, которая с помощью waitgroup дожидается результатов закрепления сообщения
+// DisableNotification - если true, уведомление о закреплении не будет отправлено
+func (app *Bot) sendPinMessageEvent(messageID int, ChatID int64, disableNotification bool) (*tgbotapi.APIResponse, error) {
+	var APIResponse *tgbotapi.APIResponse
+	var err error
+
+	// Закрепление отправленного сообщения
+	pinConfig := tgbotapi.PinChatMessageConfig{
+		ChatID:              ChatID,
+		MessageID:           messageID,
+		DisableNotification: disableNotification,
+	}
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	// Отправляем функцию в канал
+	app.msgRequestHandler.HandleRequest(func() error {
+		defer wg.Done()
+
+		// Устанавливаем глобальные параметры
+		APIResponse, err = app.botAPI.Request(pinConfig)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	wg.Wait()
+	return APIResponse, err
+}
+
+// SendSticker синхронная функция для отправки стикера
+func (app *Bot) SendSticker(stickerID string, chatID int64) (tgbotapi.Message, error) {
+	sendedMsg, err := app.sendSticker(stickerID, chatID)
+	if err != nil {
+		return sendedMsg, err
+	}
+	return sendedMsg, nil
+}
+
+// sendSticker асинхронная функция, которая с помощью waitgroup дожидается результатов от отправки стикера
+func (app *Bot) sendSticker(stickerID string, chatID int64) (tgbotapi.Message, error) {
+	var sendedMsg tgbotapi.Message
+	var err error
+
+	msg := tgbotapi.NewSticker(chatID, tgbotapi.FileID(stickerID))
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	// Отправляем функцию в канал
+	app.msgRequestHandler.HandleRequest(func() error {
+		defer wg.Done()
+
+		// Устанавливаем глобальные параметры
+		sendedMsg, err = app.botAPI.Send(msg)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	wg.Wait()
+	return sendedMsg, err
+}
+
+// SendUnPinAllMessageEvent синхронная функция для отправки события на открепление всех сообщений.
+func (app *Bot) SendUnPinAllMessageEvent(ChannelUsername string, chatID int64) (*tgbotapi.APIResponse, error) {
+	sendedMsg, err := app.sendUnPinAllMessageEvent(ChannelUsername, chatID)
+	if err != nil {
+		return sendedMsg, err
+	}
+	return sendedMsg, nil
+}
+
+// sendUnPinAllMessageEvent асинхронная функция, которая с помощью waitgroup дожидается результатов от отправки события открепления всех сообщений
+func (app *Bot) sendUnPinAllMessageEvent(ChannelUsername string, chatID int64) (*tgbotapi.APIResponse, error) {
+	var APIresponse *tgbotapi.APIResponse
+	var err error
+
+	unpinConfig := tgbotapi.UnpinAllChatMessagesConfig{
+		ChatID:          chatID,
+		ChannelUsername: ChannelUsername,
+	}
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	// Отправляем функцию в канал
+	app.msgRequestHandler.HandleRequest(func() error {
+		defer wg.Done()
+
+		// Устанавливаем глобальные параметры
+		APIresponse, err = app.botAPI.Request(unpinConfig)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	wg.Wait()
+	return APIresponse, err
+}
+
+func (app *Bot) EditMessageRepet(editMsg tgbotapi.EditMessageTextConfig, numberRepetion int) (*tgbotapi.APIResponse, error) {
 	for i := 0; i < numberRepetion; i++ {
 		response, err := app.editMessage(editMsg)
 		if err != nil {
@@ -123,7 +199,7 @@ func (app *BotStruct) EditMessageRepet(editMsg tgbotapi.EditMessageTextConfig, n
 }
 
 // EditMessage синхронно редактирует сообщение
-func (app *BotStruct) EditMessage(editMsg tgbotapi.EditMessageTextConfig) (*tgbotapi.APIResponse, error) {
+func (app *Bot) EditMessage(editMsg tgbotapi.EditMessageTextConfig) (*tgbotapi.APIResponse, error) {
 	response, err := app.editMessage(editMsg)
 	if err != nil {
 		return response, err
@@ -133,7 +209,7 @@ func (app *BotStruct) EditMessage(editMsg tgbotapi.EditMessageTextConfig) (*tgbo
 }
 
 // editMessage редактирует сообщение в чате, отправив функцию редактирования в запросы
-func (app *BotStruct) editMessage(editMsg tgbotapi.EditMessageTextConfig) (*tgbotapi.APIResponse, error) {
+func (app *Bot) editMessage(editMsg tgbotapi.EditMessageTextConfig) (*tgbotapi.APIResponse, error) {
 	var response *tgbotapi.APIResponse
 	var err error
 
@@ -145,7 +221,7 @@ func (app *BotStruct) editMessage(editMsg tgbotapi.EditMessageTextConfig) (*tgbo
 		defer wg.Done()
 
 		// Устанавливаем глобальные параметры
-		response, err = app.Request(editMsg)
+		response, err = app.botAPI.Request(editMsg)
 		if err != nil {
 			return err
 		}
@@ -157,7 +233,7 @@ func (app *BotStruct) editMessage(editMsg tgbotapi.EditMessageTextConfig) (*tgbo
 	return response, err
 }
 
-func (app *BotStruct) DeleteMessageRepet(msgToDelete tgbotapi.DeleteMessageConfig, numberRepetion int) error {
+func (app *Bot) DeleteMessageRepet(msgToDelete tgbotapi.DeleteMessageConfig, numberRepetion int) error {
 	for i := 0; i < numberRepetion; i++ {
 		err := app.deleteMessage(msgToDelete)
 		if err != nil {
@@ -171,7 +247,7 @@ func (app *BotStruct) DeleteMessageRepet(msgToDelete tgbotapi.DeleteMessageConfi
 }
 
 // DeleteMessage удаляет сообщение
-func (app *BotStruct) DeleteMessage(msgToDelete tgbotapi.DeleteMessageConfig) error {
+func (app *Bot) DeleteMessage(msgToDelete tgbotapi.DeleteMessageConfig) error {
 	err := app.deleteMessage(msgToDelete)
 	if err != nil {
 		return err
@@ -180,7 +256,7 @@ func (app *BotStruct) DeleteMessage(msgToDelete tgbotapi.DeleteMessageConfig) er
 	return nil
 }
 
-func (app *BotStruct) deleteMessage(deleteMsg tgbotapi.DeleteMessageConfig) error {
+func (app *Bot) deleteMessage(deleteMsg tgbotapi.DeleteMessageConfig) error {
 	var err error
 
 	var wg sync.WaitGroup
@@ -190,7 +266,7 @@ func (app *BotStruct) deleteMessage(deleteMsg tgbotapi.DeleteMessageConfig) erro
 	app.msgRequestHandler.HandleRequest(func() error {
 		defer wg.Done()
 
-		_, err = app.Request(deleteMsg)
+		_, err = app.botAPI.Request(deleteMsg)
 		if err != nil {
 			return err
 		}
@@ -204,11 +280,11 @@ func (app *BotStruct) deleteMessage(deleteMsg tgbotapi.DeleteMessageConfig) erro
 
 // ShowAlert показывает пользователю предупреждение. alert по типу браузерного.
 // Для закрытия такого уведомления потребуется нажать "ок"
-func (app *BotStruct) ShowAlert(CallbackQueryID string, alertText string) {
+func (app *Bot) ShowAlert(CallbackQueryID string, alertText string) {
 	callback := tgbotapi.NewCallback(CallbackQueryID, alertText)
 	// Это заставит текст появиться во всплывающем окне
 	callback.ShowAlert = true
-	_, err := app.BotAPI.Request(callback)
+	_, err := app.botAPI.Request(callback)
 	if err != nil {
 		logger.Log.Info("Не удалось показать alert после CallbackQuery: ", err)
 	}
@@ -263,21 +339,8 @@ func CreateInlineKeyboard(buttons [][]ButtonData) tgbotapi.InlineKeyboardMarkup 
 	return tgbotapi.NewInlineKeyboardMarkup(keyboard...)
 }
 
-func CreateReplyKeyboard(buttons [][]ButtonData) tgbotapi.ReplyKeyboardMarkup {
-	var keyboard [][]tgbotapi.KeyboardButton
-
-	for _, row := range buttons {
-		var keyboardRow []tgbotapi.KeyboardButton
-		for _, button := range row {
-			keyboardRow = append(keyboardRow, tgbotapi.NewKeyboardButton(button.Text))
-		}
-		keyboard = append(keyboard, keyboardRow)
-	}
-
-	return tgbotapi.NewReplyKeyboard(keyboard...)
-}
-
-func (app *BotStruct) SendMessageRepetLowPriority(msg tgbotapi.MessageConfig, numberRepetion int) (tgbotapi.Message, error) {
+// SendMessageRepetLowPriority синхронная функция, которая отправляет сообщение в телеграм с низким приоритетом
+func (app *Bot) SendMessageRepetLowPriority(msg tgbotapi.MessageConfig, numberRepetion int) (tgbotapi.Message, error) {
 	for i := 0; i < numberRepetion; i++ {
 		sendedMsg, err := app.SendMessageLowPriority(msg)
 		if err != nil {
@@ -290,7 +353,7 @@ func (app *BotStruct) SendMessageRepetLowPriority(msg tgbotapi.MessageConfig, nu
 }
 
 // SendMessageLowPriority синхронная функция, которая отправляет сообщение в телеграм с низким приоритетом
-func (app *BotStruct) SendMessageLowPriority(msg tgbotapi.MessageConfig) (tgbotapi.Message, error) {
+func (app *Bot) SendMessageLowPriority(msg tgbotapi.MessageConfig) (tgbotapi.Message, error) {
 	sendedMsg, err := app.sendMessageLowPriority(msg)
 	if err != nil {
 		return sendedMsg, err
@@ -299,7 +362,7 @@ func (app *BotStruct) SendMessageLowPriority(msg tgbotapi.MessageConfig) (tgbota
 }
 
 // sendMessage асинхронная функция, которая с помощью waitgroup дожидается результатов от отправки сообщения
-func (app *BotStruct) sendMessageLowPriority(msg tgbotapi.MessageConfig) (tgbotapi.Message, error) {
+func (app *Bot) sendMessageLowPriority(msg tgbotapi.MessageConfig) (tgbotapi.Message, error) {
 	var sendedMsg tgbotapi.Message
 	var err error
 
@@ -311,7 +374,7 @@ func (app *BotStruct) sendMessageLowPriority(msg tgbotapi.MessageConfig) (tgbota
 		defer wg.Done()
 
 		// Устанавливаем глобальные параметры
-		sendedMsg, err = app.Send(msg)
+		sendedMsg, err = app.botAPI.Send(msg)
 		if err != nil {
 			return err
 		}
@@ -323,7 +386,7 @@ func (app *BotStruct) sendMessageLowPriority(msg tgbotapi.MessageConfig) (tgbota
 	return sendedMsg, err
 }
 
-func (app *BotStruct) EditMessageRepetLowPriority(editMsg tgbotapi.EditMessageTextConfig, numberRepetion int) (*tgbotapi.APIResponse, error) {
+func (app *Bot) EditMessageRepetLowPriority(editMsg tgbotapi.EditMessageTextConfig, numberRepetion int) (*tgbotapi.APIResponse, error) {
 	for i := 0; i < numberRepetion; i++ {
 		response, err := app.EditMessageLowPriority(editMsg)
 		if err != nil {
@@ -336,7 +399,7 @@ func (app *BotStruct) EditMessageRepetLowPriority(editMsg tgbotapi.EditMessageTe
 }
 
 // EditMessageLowPriority синхронная функция дли редактирования вообщения
-func (app *BotStruct) EditMessageLowPriority(editMsg tgbotapi.EditMessageTextConfig) (*tgbotapi.APIResponse, error) {
+func (app *Bot) EditMessageLowPriority(editMsg tgbotapi.EditMessageTextConfig) (*tgbotapi.APIResponse, error) {
 	response, err := app.editMessageLowPriority(editMsg)
 	if err != nil {
 		return response, err
@@ -346,7 +409,7 @@ func (app *BotStruct) EditMessageLowPriority(editMsg tgbotapi.EditMessageTextCon
 }
 
 // editMessage редактирует сообщение в чате, отправив функцию редактирования в запросы
-func (app *BotStruct) editMessageLowPriority(editMsg tgbotapi.EditMessageTextConfig) (*tgbotapi.APIResponse, error) {
+func (app *Bot) editMessageLowPriority(editMsg tgbotapi.EditMessageTextConfig) (*tgbotapi.APIResponse, error) {
 	var err error
 	var editedMsg *tgbotapi.APIResponse
 
@@ -357,7 +420,7 @@ func (app *BotStruct) editMessageLowPriority(editMsg tgbotapi.EditMessageTextCon
 	app.msgRequestHandler.HandleLowPriorityRequest(func() error {
 		defer wg.Done()
 
-		editedMsg, err = app.Request(editMsg)
+		editedMsg, err = app.botAPI.Request(editMsg)
 		if err != nil {
 			return err
 		}
@@ -368,31 +431,79 @@ func (app *BotStruct) editMessageLowPriority(editMsg tgbotapi.EditMessageTextCon
 	return editedMsg, err
 }
 
-func (app *BotStruct) SendMessageButtonLowPriorityRepet(chatID int64, msgText, buttonText, buttonCallbackText string, numberRepetion int) (tgbotapi.Message, error) {
-	for i := 0; i < numberRepetion; i++ {
-		sendedMsg, err := app.SendMessageButtonLowPriority(chatID, msgText, buttonText, buttonCallbackText)
+// SendAllAdmins отправляет текст всем админам в лс и ошибку в топик с ошибками
+func (app *Bot) SendAllAdmins(msgTexts string) {
+	conf := model.ConfigFile.TelegramConfig
+
+	for _, v := range conf.Admins {
+
+		msg := tgbotapi.NewMessage(v, msgTexts)
+		msg.ParseMode = "html"
+		_, err := app.SendMessage(msg)
 		if err != nil {
+			logger.Log.Info("Ошибка при отправке сообщения админу (", v, "):  ", err)
+		}
+
+	}
+}
+
+// SendQuantityReplaceTransfer отправляет сводку о количестве заявок за день в указанные чаты.
+//
+// Параметры:
+//   - chatIDs: срез идентификаторов чатов, куда нужно отправить сообщение
+//   - general: общее количество заявок
+//   - replace: количество заявок на замену
+//   - transfer: количество заявок на перенос
+//
+// Функция формирует текстовое сообщение с информацией о количестве заявок
+// и отправляет его в каждый из указанных чатов. Если при отправке сообщения
+// возникает ошибка, она логируется, но выполнение функции продолжается для
+// остальных чатов.
+//
+// Возвращает nil, так как ошибки обрабатываются внутри функции и не прерывают её работу.
+func (app *Bot) SendQuantityReplaceTransfer(chatIDs []int64, general, replace, transfer int64) error {
+	msgText := "За день было отправлено\nВсего: " + fmt.Sprint(general) + " заявок\n" + "Замен: " + fmt.Sprint(replace) + "\n" + "Переносов: " + fmt.Sprint(transfer)
+
+	for _, v := range chatIDs {
+		msg := tgbotapi.NewMessage(v, msgText)
+		_, err := app.SendMessage(msg)
+		if err != nil {
+			logger.Log.Info("Ошибка при отправке сообщения в чат админов (", v, "):  ", err)
+		}
+	}
+	return nil
+}
+
+func (app *Bot) SendMessageButtonLowPriorityRepet(chatID int64, msgText, buttonText, buttonCallbackText string, numberRepetion int) (tgbotapi.Message, error) {
+	var err error
+	var sendedMsg tgbotapi.Message
+	var trueError error
+
+	for i := 0; i < numberRepetion; i++ {
+		sendedMsg, err = app.SendMessageButtonLowPriority(chatID, msgText, buttonText, buttonCallbackText)
+		if err != nil {
+			trueError = err
 			logger.Log.Info("Ошибка при отправке сообщения: ", err)
 		} else {
-			return sendedMsg, err
+			return sendedMsg, nil
 		}
 	}
 
-	return tgbotapi.Message{}, nil
+	return tgbotapi.Message{}, trueError
 }
 
 // SendMessage синхронная функция, которая отправляет сообщение с кнопкой
-func (app *BotStruct) SendMessageButtonLowPriority(chatID int64, msgText, buttonText, buttonCallbackText string) (tgbotapi.Message, error) {
+func (app *Bot) SendMessageButtonLowPriority(chatID int64, msgText, buttonText, buttonCallbackText string) (tgbotapi.Message, error) {
 
 	msg := tgbotapi.NewMessage(chatID, msgText)
 	row := []tgbotapi.InlineKeyboardButton{
 		tgbotapi.NewInlineKeyboardButtonData(buttonText, buttonCallbackText),
 	}
+
 	msg.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup(row)
 	msg.ParseMode = "html"
+
 	sendedMsg, err := app.SendMessageLowPriority(msg)
-	if err != nil {
-		return sendedMsg, err
-	}
-	return sendedMsg, nil
+
+	return sendedMsg, err
 }

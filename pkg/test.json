@@ -1,0 +1,25 @@
+{
+  "ID": 11,
+  "CreatedAt": "2024-10-09T23:37:51.635906+03:00",
+  "UpdatedAt": "2024-10-09T23:37:51.635906+03:00",
+  "DeletedAt": null,
+  "HolderID": 1,
+  "HolderTgID": 878413772,
+  "Holder": {
+    "ID": 0,
+    "CreatedAt": "0001-01-01T00:00:00Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "DeletedAt": null,
+    "TgUserID": 0,
+    "ConsistsOf": null,
+    "FirstName": "",
+    "SecondName": "",
+    "UserName": ""
+  },
+  "Name": "Group1",
+  "Title": "First Group",
+  "StartDate": "2024-01-01T00:00:00Z",
+  "IsAlternatingGroup": false,
+  "EvenWeek": "{}",
+  "OddWeek": "{}"
+}

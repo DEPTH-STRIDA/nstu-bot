@@ -1,32 +1,30 @@
 package main
 
 import (
-	"nstu/internal/logger"
-	"nstu/internal/models"
-	"nstu/internal/tg"
-	"nstu/internal/web"
+	"app/internal/business"
+	"app/internal/db"
+	"app/internal/logger"
+	"app/internal/model"
+	"app/internal/moyklass"
+	"app/internal/tg"
+	u "app/internal/utils"
+	"net/http"
 )
 
 func main() {
-	handleErr(logger.IniLogger())
-	handleErr(models.InitConfig())
-	handleErr(models.InitDataBase())
+	u.HandleFatalError(logger.IniLogger())
 
-	bot, err := tg.InitTgBNot()
-	handleErr(err)
-	go bot.HandleUpdates()
-	tg.Bot = bot
+	u.HandleFatalError(model.InitConfig())
 
-	webApp, err := web.NewWebApp()
-	handleErr(err)
+	u.HandleFatalError(db.InitDataBase())
 
-	handleErr(webApp.HandleUpdates())
-}
+	u.HandleFatalError(tg.InitTgBot())
 
-// handleErr проверяет наличие ошибки. В случае наличия ошикби, логгирует ее и останавливает программу.
-func handleErr(err error) {
-	if err != nil {
-		logger.Log.Error("Ошибка при запуске приложения: %s", err)
-		panic("")
-	}
+	mux := http.NewServeMux()
+
+	u.HandleFatalError(moyklass.InitNoyKlass(mux))
+
+	u.HandleFatalError(business.InitLogicApp(mux))
+
+	business.App.StartServer()
 }

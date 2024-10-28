@@ -1,9 +1,9 @@
 package request
 
 import (
+	"app/internal/logger"
 	"context"
 	"errors"
-	"nstu/internal/logger"
 	"sync"
 	"time"
 )
@@ -19,7 +19,7 @@ type RequestHandler struct {
 	isProcessing        bool
 }
 
-func NewRequestHandler(bufferSize int64) (*RequestHandler, error) {
+func NewRequestHandler(bufferSize int) (*RequestHandler, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	requestApp := RequestHandler{
 		requests:            make(chan Request, bufferSize),
@@ -35,7 +35,6 @@ func NewRequestHandler(bufferSize int64) (*RequestHandler, error) {
 func (app *RequestHandler) HandleRequest(req Request) error {
 	app.mu.Lock()
 	if !app.isProcessing {
-		logger.Log.Error("не удаться добавить запрос в обработчик-откладыватель. Обработка не запущен")
 		return errors.New("не удаться добавить запрос в обработчик-откладыватель. Обработка не запущена")
 	}
 	app.mu.Unlock()
@@ -48,7 +47,6 @@ func (app *RequestHandler) HandleRequest(req Request) error {
 func (app *RequestHandler) HandleLowPriorityRequest(req Request) error {
 	app.mu.Lock()
 	if !app.isProcessing {
-		logger.Log.Error("не удаться добавить запрос в обработчик-откладыватель. Обработка не запущен")
 		return errors.New("не удаться добавить запрос в обработчик-откладыватель. Обработка не запущена")
 	}
 	app.mu.Unlock()
@@ -76,12 +74,12 @@ func (app *RequestHandler) ProcessRequests(pause time.Duration) {
 		case req := <-app.requests:
 			err := req()
 			if err != nil {
-				logger.Log.Error("Ошибка при выполнении запроса:" + err.Error())
+				logger.Log.Error("Ошибка при выполнении запроса: ", err)
 			}
 		case req := <-app.lowPriorityRequests:
 			err := req()
 			if err != nil {
-				logger.Log.Error("Ошибка при выполнении приоритетного запроса:" + err.Error())
+				logger.Log.Error("Ошибка при выполнении низко приоритетного запроса: ", err)
 			}
 		}
 		time.Sleep(pause)
@@ -113,13 +111,13 @@ func (app *RequestHandler) ProcessRequestsWithDynamicPause(defaultPause time.Dur
 			consecutiveRequests++
 			err := req()
 			if err != nil {
-				logger.Log.Error("Ошибка при выполнении запроса: " + err.Error())
+				logger.Log.Error("Ошибка при выполнении запроса: ", err)
 			}
 		case req := <-app.lowPriorityRequests:
 			consecutiveRequests++
 			err := req()
 			if err != nil {
-				logger.Log.Error("Ошибка при выполнении приоритетного запроса: " + err.Error())
+				logger.Log.Error("Ошибка при выполнении низко приоритетного запроса: ", err)
 			}
 		default:
 			// Если нет запросов, сбрасываем счетчик и паузу

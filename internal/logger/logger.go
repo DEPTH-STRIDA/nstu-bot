@@ -75,11 +75,22 @@ func NewFileLogger(basePath string) (*FileLogger, error) {
 	dir := filepath.Dir(basePath)
 	err := os.MkdirAll(dir, 0755)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ошибка создания директории: %v", err)
 	}
 
+	// Формируем имя файла с текущей датой и временем
+	fileName := time.Now().Format("2006-01-02_15-04-05") + ".log"
+	filePath := filepath.Join(dir, fileName)
+
+	// Создаем файл, если он не существует
+	file, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		return nil, fmt.Errorf("ошибка создания файла: %v", err)
+	}
+	file.Close()
+
 	writer := &lumberjack.Logger{
-		Filename:   filepath.Join(dir, "log.log"),
+		Filename:   filePath,
 		MaxSize:    10, // мегабайты
 		MaxBackups: 5,
 		MaxAge:     7, // дни
@@ -101,8 +112,16 @@ func (f *FileLogger) log(level LogLevel, args ...interface{}) {
 		Message:   fmt.Sprint(args...),
 	}
 
-	data, _ := json.Marshal(entry)
-	f.writer.Write(append(data, '\n'))
+	data, err := json.Marshal(entry)
+	if err != nil {
+		fmt.Printf("ошибка маршалинга JSON: %v\n", err)
+		return
+	}
+
+	_, err = f.writer.Write(append(data, '\n'))
+	if err != nil {
+		fmt.Printf("ошибка записи в файл: %v\n", err)
+	}
 }
 
 func (f *FileLogger) Warn(args ...interface{})  { f.log(WARN, args...) }

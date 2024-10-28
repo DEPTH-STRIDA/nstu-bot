@@ -1,0 +1,25 @@
+{"time":"29-10-2024 01:34:28","level":"INFO","message":"Загруженые параметры: \n\u0026{{localhost 8000 13dngd_dvn3j123_cn4un} {6710814964:AAHoa076nJmN8ScXt2Kv9iCuihUDiZnunw0 [878413772] 1000 0 100 100 -1002195425772} {localhost 5432 spring_database spring_user_new 12345678 disable} {nui8sff3 01T1dHN76YaDU7OuU1lCCTZ9GYJGEXgasSPnW1NQ2snjYqXr09Oz} {awesome.gail@yandex.ru nnczofiwvuivooil smtp.yandex.ru 465 587}}"}
+{"time":"29-10-2024 01:34:28","level":"INFO","message":"Подключение к БД успешно установлено."}
+{"time":"29-10-2024 01:34:28","level":"INFO","message":"Успешно установлена текстовая команда: /start"}
+{"time":"29-10-2024 01:34:28","level":"INFO","message":"Успешно установлена текстовая команда: /help"}
+{"time":"29-10-2024 01:34:28","level":"INFO","message":"Успешно установлена текстовая команда: /menu"}
+{"time":"29-10-2024 01:34:28","level":"INFO","message":"Успешно установлена текстовая команда: /feedback"}
+{"time":"29-10-2024 01:34:28","level":"INFO","message":"Успешно установлена текстовая команда: /links"}
+{"time":"29-10-2024 01:34:28","level":"INFO","message":"Успешно установлена текстовая команда: /menu"}
+{"time":"29-10-2024 01:34:28","level":"INFO","message":"Успешно установлена текстовая команда: отмена"}
+{"time":"29-10-2024 01:34:28","level":"INFO","message":"Успешно установлена текстовая команда: выйти"}
+{"time":"29-10-2024 01:34:28","level":"INFO","message":"Успешно установлена текстовая команда: /auth"}
+{"time":"29-10-2024 01:34:28","level":"INFO","message":"Успешно установлена callback команда: callback-help"}
+{"time":"29-10-2024 01:34:28","level":"INFO","message":"Успешно установлена callback команда: callback-feedback"}
+{"time":"29-10-2024 01:34:28","level":"INFO","message":"Успешно установлена callback команда: callback-links"}
+{"time":"29-10-2024 01:34:28","level":"INFO","message":"Успешно установлена callback команда: callback-google-form"}
+{"time":"29-10-2024 01:34:28","level":"INFO","message":"Успешно установлена callback команда: callback-tutor"}
+{"time":"29-10-2024 01:34:28","level":"INFO","message":"Успешно установлена callback команда: callback-auth"}
+{"time":"29-10-2024 01:34:29","level":"INFO","message":"Starting server on localhost:8000"}
+{"time":"29-10-2024 01:34:32","level":"INFO","message":"Успешно обработана команда: /auth от пользователя (878413772:Tichomirov2003"}
+{"time":"29-10-2024 01:34:38","level":"INFO","message":"Пользователь ( 878413772 : Tichomirov2003 отправил команду awesome.gail@yandex.ru: в чат, которая не была найдена."}
+{"time":"29-10-2024 01:34:39","level":"INFO","message":"Пользователь ( 878413772 : Tichomirov2003 отправил команду Отправить код подтверждения: в чат, которая не была найдена."}
+{"time":"29-10-2024 01:34:39","level":"INFO","message":"Отправляем код на awesome.gail@yandex.ru"}
+{"time":"29-10-2024 01:34:48","level":"INFO","message":"Пользователь ( 878413772 : Tichomirov2003 отправил команду 30674: в чат, которая не была найдена."}
+{"time":"29-10-2024 01:34:50","level":"INFO","message":"Пользователь ( 878413772 : Tichomirov2003 отправил команду Подтвердить: в чат, которая не была найдена."}
+{"time":"29-10-2024 01:34:54","level":"INFO","message":"Успешно обработана команда: /menu от пользователя (878413772:Tichomirov2003"}

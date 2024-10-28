@@ -2,46 +2,46 @@
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
 
-    tg_user_id BIGINT NOT NULL UNIQUE,
-    consists_of INTEGER,
-    first_name VARCHAR(255),
-    second_name VARCHAR(255),
-    user_name VARCHAR(255),
+    tg_user_id BIGINT NOT NULL UNIQUE, -- Уникальный идентификатор пользователя в Telegram
+    consists_of INTEGER, -- Ссылка на группу
+    first_name VARCHAR(255), -- Имя
+    second_name VARCHAR(255), -- Фамилия
+    user_name VARCHAR(255), -- Username
     
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP WITH TIME ZONE
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP, -- Дата создания
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP, -- Дата обновления
+    deleted_at TIMESTAMP WITH TIME ZONE -- Дата удаления
 );
 
 -- Таблица групп и их расписания и владельца
 CREATE TABLE IF NOT EXISTS groups (
     id SERIAL PRIMARY KEY,
-    holder_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    holder_id INTEGER REFERENCES users(id) ON DELETE CASCADE, -- Внешний ключ на пользователя (владелец группы)
+    holder_tg_id BIGINT NOT NULL, -- ID владельца в Telegram
     
-    name VARCHAR(255) NOT NULL,
-    title VARCHAR(255),
+    name VARCHAR(255) NOT NULL, -- Имя группы
+    title VARCHAR(255), -- Описание группы
 
-    start_date DATE,
-    is_alternating_group BOOLEAN DEFAULT FALSE,
-    even_week JSONB NOT NULL,
-    odd_week JSONB NOT NULL,
+    start_date DATE, -- Дата начала
+    is_alternating_group BOOLEAN DEFAULT FALSE, -- Является ли группа чередующейся
+    even_week JSONB NOT NULL, -- Расписание на четную неделю
+    odd_week JSONB NOT NULL, -- Расписание на нечетную неделю
 
-
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP WITH TIME ZONE
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP, -- Дата создания
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP, -- Дата обновления
+    deleted_at TIMESTAMP WITH TIME ZONE -- Дата удаления
 );
 
 -- Таблица для контролирования состава групп
-CREATE TABLE IF NOT EXISTS  structure_of_group (
+CREATE TABLE IF NOT EXISTS structure_of_group (
     id SERIAL PRIMARY KEY,
-    group_id INTEGER REFERENCES groups(id) ON DELETE CASCADE,
-    structure BIGINT[],
-
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP WITH TIME ZONE
+    group_id INTEGER REFERENCES groups(id) ON DELETE CASCADE, -- Внешний ключ на группу
+    structure BIGINT[], -- Массив с идентификаторами пользователей
+    
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP, -- Дата создания
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP, -- Дата обновления
+    deleted_at TIMESTAMP WITH TIME ZONE -- Дата удаления
 );
 
-
---CREATE INDEX IF NOT EXISTS idx_groups_holder_id ON groups(holder_id);
+-- Индекс для ускорения запросов по holder_id
+CREATE INDEX IF NOT EXISTS idx_groups_holder_id ON groups(holder_id);

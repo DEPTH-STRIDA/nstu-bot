@@ -1,0 +1,38 @@
+{{define "changeSchedule"}}
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="theme-color" content="#ff0b0b" />
+		<link rel="icon" href="/static/img/favicon.ico" type="image/x-icon" />
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://telegram.org/js/telegram-web-app.js"></script>
+		<script src="/static/js/changeSchedule.js"></script>
+
+		<link rel="stylesheet" href="/static/css/new_schedule_group.css" />
+
+		<title>Редактирование расписания</title>
+		<meta name="description" content="" />
+	</head>
+	<body onload="initialization()">
+
+		<section class="page-contain_input" >
+			<a class="data-card_schedule">
+				<h2 id="GroupName">{{.GroupName}}</h2>
+			</a>
+		</section>	
+
+		<section class="page-contain_input" id="page-contain_schedule">
+			<a class="data-card_schedule" id="schedule">
+				<div id="form_schedule">
+					
+				</div>
+			</a>
+		</section>
+	</body>
+</html>
+{{end}}
+
+{{template "changeSchedule" .}}

@@ -1,0 +1,241 @@
+{{define "newGroup"}}
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="theme-color" content="#ff0b0b" />
+		<link rel="icon" href="/static/img/favicon.ico" type="image/x-icon" />
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+
+		<script src="/static/js/new_group.page.js"></script>
+
+		<link rel="stylesheet" href="/static/css/new_group.page.css" />
+
+		<title>Создание новой группы</title>
+		<meta name="description" content="" />
+	</head>
+	<body onload="initialization()">
+
+		<section class="page-contain_input" >
+			<a class="data-card_schedule">
+				<h2>Введите имя группы</h2>
+				<h id="hide_label">Группа успешно создана.<br>Теперь вы можете заполнить расписание</h>
+				<input type="text" onkeydown="disableEnterKey(event)" id="groupNameInput" placeholder="Название группы" />
+				<button class="button-28_input" role="button" id="first_button" onclick="setNewGroup()">Создать группу.</button>
+			</a>
+		</section>
+		<section class="page-contain_input" id="page-contain_schedule">
+
+			<a class="data-card_schedule" id="schedule">
+			<div id="form_schedule">
+				
+				<button class="button-28_input" role="button" id="first_button_1" onclick="editShedule()">Собрать расписание.</button>
+				<h2>Четная неделя</h2>
+				
+				<table>
+					<tbody>
+						<tr>
+							<td><h>Понедельник</h></td>
+						</tr>
+						<tr>
+							<td><input class="input_class" type="text" onkeydown="disableEnterKey(event)" placeholder="Предмет" id="even_monday_0" /></td>
+						</tr>
+						<tr>
+							<td>
+								<button class="button_plus" type="button" id="even_monday_plus_button">+</button>
+								<button class="button_minus" type="button" id="even_monday_minus_button">-</button>
+							</td>
+						</tr>
+
+						<tr>
+							<td><h>Вторник</h></td>
+						</tr>
+						<tr>
+							<td><input class="input_class" type="text" onkeydown="disableEnterKey(event)" placeholder="Предмет" id="even_tuesday_0" /></td>
+						</tr>
+						<tr>
+							<td>
+								<button class="button_plus" type="button" id="even_tuesday_plus_button">+</button>
+								<button class="button_minus" type="button" id="even_tuesday_minus_button">-</button>
+							</td>
+						</tr>
+
+						<tr>
+							<td><h>Среда</h></td>
+						</tr>
+						<tr>
+							<td><input class="input_class" type="text" onkeydown="disableEnterKey(event)" placeholder="Предмет" id="even_wednesday_0" /></td>
+						</tr>
+						<tr>
+							<td>
+								<button class="button_plus" type="button" id="even_wednesday_plus_button">+</button>
+								<button class="button_minus" type="button" id="even_wednesday_minus_button">-</button>
+							</td>
+						</tr>
+
+						<tr>
+							<td><h>Четверг</h></td>
+						</tr>
+						<tr>
+							<td><input class="input_class" type="text" onkeydown="disableEnterKey(event)" placeholder="Предмет" id="even_thursday_0" /></td>
+						</tr>
+						<tr>
+							<td>
+								<button class="button_plus" type="button" id="even_thursday_plus_button">+</button>
+								<button class="button_minus" type="button" id="even_thursday_minus_button">-</button>
+							</td>
+						</tr>
+
+						<tr>
+							<td><h>Пятница</h></td>
+						</tr>
+						<tr>
+							<td><input class="input_class" type="text" onkeydown="disableEnterKey(event)" placeholder="Предмет" id="even_friday_0" /></td>
+						</tr>
+						<tr>
+							<td>
+								<button class="button_plus" type="button" id="even_friday_plus_button">+</button>
+								<button class="button_minus" type="button" id="even_friday_minus_button">-</button>
+							</td>
+						</tr>
+
+						<tr>
+							<td><h>Суббота</h></td>
+						</tr>
+						<tr>
+							<td><input class="input_class" type="text" onkeydown="disableEnterKey(event)" placeholder="Предмет" id="even_saturday_0" /></td>
+						</tr>
+						<tr>
+							<td>
+								<button class="button_plus" type="button" id="even_saturday_plus_button">+</button>
+								<button class="button_minus" type="button" id="even_saturday_minus_button">-</button>
+							</td>
+						</tr>
+
+						<tr>
+							<td><h>Воскресенье</h></td>
+						</tr>
+						<tr>
+							<td><input class="input_class" type="text" onkeydown="disableEnterKey(event)" placeholder="Предмет" id="even_sunday_0" /></td>
+						</tr>
+						<tr>
+							<td>
+								<button class="button_plus" type="button" id="even_sunday_plus_button">+</button>
+								<button class="button_minus" type="button" id="even_sunday_minus_button">-</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<h2 id="second_label">Нечетная неделя</h2>
+
+				
+				<table>
+					<tbody>
+						<tr>
+							<td><h>Понедельник</h></td>
+						</tr>
+						<tr>
+							<td><input class="input_class" type="text" onkeydown="disableEnterKey(event)" placeholder="Предмет" id="odd_monday_0" /></td>
+						</tr>
+						<tr>
+							<td>
+								<button class="button_plus" type="button" id="odd_monday_plus_button">+</button>
+								<button class="button_minus" type="button" id="odd_monday_minus_button">-</button>
+							</td>
+						</tr>
+
+						<tr>
+							<td><h>Вторник</h></td>
+						</tr>
+						<tr>
+							<td><input class="input_class" type="text" onkeydown="disableEnterKey(oddt)" placeholder="Предмет" id="odd_tuesday_0" /></td>
+						</tr>
+						<tr>
+							<td>
+								<button class="button_plus" type="button" id="odd_tuesday_plus_button">+</button>
+								<button class="button_minus" type="button" id="odd_tuesday_minus_button">-</button>
+							</td>
+						</tr>
+
+						<tr>
+							<td><h>Среда</h></td>
+						</tr>
+						<tr>
+							<td><input class="input_class" type="text" onkeydown="disableEnterKey(event)" placeholder="Предмет" id="odd_wednesday_0" /></td>
+						</tr>
+						<tr>
+							<td>
+								<button class="button_plus" type="button" id="odd_wednesday_plus_button">+</button>
+								<button class="button_minus" type="button" id="odd_wednesday_minus_button">-</button>
+							</td>
+						</tr>
+
+						<tr>
+							<td><h>Четверг</h></td>
+						</tr>
+						<tr>
+							<td><input class="input_class" type="text" onkeydown="disableEnterKey(event)" placeholder="Предмет" id="odd_thursday_0" /></td>
+						</tr>
+						<tr>
+							<td>
+								<button class="button_plus" type="button" id="odd_thursday_plus_button">+</button>
+								<button class="button_minus" type="button" id="odd_thursday_minus_button">-</button>
+							</td>
+						</tr>
+
+						<tr>
+							<td><h>Пятница</h></td>
+						</tr>
+						<tr>
+							<td><input class="input_class" type="text" onkeydown="disableEnterKey(event)" placeholder="Предмет" id="odd_friday_0" /></td>
+						</tr>
+						<tr>
+							<td>
+								<button class="button_plus" type="button" id="odd_friday_plus_button">+</button>
+								<button class="button_minus" type="button" id="odd_friday_minus_button">-</button>
+							</td>
+						</tr>
+
+						<tr>
+							<td><h>Суббота</h></td>
+						</tr>
+						<tr>
+							<td><input class="input_class" type="text" onkeydown="disableEnterKey(event)" placeholder="Предмет" id="odd_saturday_0" /></td>
+						</tr>
+						<tr>
+							<td>
+								<button class="button_plus" type="button" id="odd_saturday_plus_button">+</button>
+								<button class="button_minus" type="button" id="odd_saturday_minus_button">-</button>
+							</td>
+						</tr>
+
+						<tr>
+							<td><h>Воскресенье</h></td>
+						</tr>
+						<tr>
+							<td><input class="input_class" type="text" onkeydown="disableEnterKey(event)" placeholder="Предмет" id="odd_sunday_0" /></td>
+						</tr>
+						<tr>
+							<td>
+								<button class="button_plus" type="button" id="odd_sunday_plus_button">+</button>
+								<button class="button_minus" type="button" id="odd_sunday_minus_button">-</button>
+							</td>
+						</tr>
+					</tbody>
+				
+				</table>
+			</div>
+			</a>
+		</section>
+
+		
+	</body>
+</html>
+{{end}}
+
+{{template "newGroup" .}}

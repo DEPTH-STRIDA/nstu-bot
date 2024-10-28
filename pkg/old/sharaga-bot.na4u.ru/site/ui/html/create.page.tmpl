@@ -1,0 +1,26 @@
+{{define "create"}}
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<meta name="theme-color" content="#ff0b0b" />
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<link rel="icon" href="/static/img/favicon.ico" type="image/x-icon" />
+
+		<link rel="stylesheet" href="/static/css/create.page.css" />
+
+		<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+		<title>Меню для админов</title>
+		<meta name="description" content="" />
+	</head>
+	<body>
+		<button class="button-28" role="button" type="{{.}}" id="deleteButton" name="popup-button">Тест</button>
+	</body>
+</html>
+{{end}}
+
+{{template "create" .}}

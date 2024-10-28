@@ -1,28 +1,39 @@
 package tg
 
-import "time"
+/*
+menu - посмотреть меню
+help -помощь куратора или через форму
+feedback - оставить ОС по методичкам
+links - посмотреть ссылки
+auth - авторизоваться
+*/
 
-func (b *BotStruct) SetMsgRoutes() error {
+func (b *Bot) SetMsgRoutes() error {
 
-	b.HandlMsgRoute("/start", HandleStartMessage())
-	b.HandlMsgRoute("/help", HandleStartMessage())
+	b.HandlMsgRoute("/start", HandleStartMessage)
 
-	b.HandlMsgRoute("/open", HandleOpen())
-	b.HandlMsgRoute("/close", HandleClose())
-	b.HandlMsgRoute("/menu", HandleStartMessage())
+	b.HandlMsgRoute("/help", HandleHelp)
+	b.HandlMsgRoute("/menu", HandleMenu)
+	b.HandlMsgRoute("/feedback", HandleFeedback)
+	b.HandlMsgRoute("/links", HandleLinks)
+	b.HandlMsgRoute("/menu", HandleMenu)
 
-	b.HandlMsgRoute("Сегодня", HandleSchedule(time.Now()))
-	b.HandlMsgRoute("Завтра", HandleSchedule(time.Now().Add(24*time.Hour)))
-	b.HandlMsgRoute("Все расписание", HandleAllSchedule())
+	b.HandlMsgRoute("отмена", HandleCancel)
 
-	b.HandlMsgRoute("Войти в меню", HandleEnterMenu())
+	b.HandlMsgRoute("выйти", HandleExit)
+
+	b.HandlMsgRoute("/auth", HandleEnterEnterMail)
 
 	return nil
 }
 
-func (b *BotStruct) SetCallBackRoutes() error {
+func (b *Bot) SetCallBackRoutes() error {
+	b.HandlCallbackRoute("callback-help", HandleHelp)
+	b.HandlCallbackRoute("callback-feedback", HandleFeedback)
+	b.HandlCallbackRoute("callback-links", HandleLinks)
+	b.HandlCallbackRoute("callback-google-form", HandleGoogleFormHelp)
+	b.HandlCallbackRoute("callback-tutor", HandleTutorHelp)
 
-	// b.HandlMsgRoute("/start", HandleStartMessage())
-
+	b.HandlCallbackRoute("callback-auth", HandleEnterEnterMail)
 	return nil
 }
