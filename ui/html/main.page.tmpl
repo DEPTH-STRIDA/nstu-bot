@@ -1,0 +1,1410 @@
+{{define "main"}}
+
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>SHARAGA bot</title>
+    <!-- tg -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- js -->
+    <script src="/static/js/main/unitar.js?v={{.Version}}"></script>
+    <script src="/static/js/main/scripts.js?v={{.Version}}"></script>
+    <script src="/static/js/main/slider.js?v={{.Version}}"></script>
+    <script src="/static/js/main/search-sort.js?v={{.Version}}"></script>
+    <!-- css -->
+    <link rel="stylesheet" href="/static/css/main/style.css?v={{.Version}}" />
+    <link
+      rel="stylesheet"
+      href="/static/css/main/volume-slider.css?v={{.Version}}"
+    />
+    <link
+      rel="stylesheet"
+      href="/static/css/main/theme-slider.css?v={{.Version}}"
+    />
+    <link
+      rel="stylesheet"
+      href="/static/css/main/custom-checkbox.css?v={{.Version}}"
+    />
+    <link
+      rel="stylesheet"
+      href="/static/css/main/section-slider.css?v={{.Version}}"
+    />
+  </head>
+  <body>
+    c:\Users\Максим\Desktop\easycode-support-bot\ui\static\font\Roboto.ttf
+    <!-- Боковое меню -->
+    <section class="sidebar-menu" id="sidebar-menu">
+      <div class="container">
+        <div class="header-menu">
+          <h2><span class="bold">GOLANG</span> DEVELOPER</h2>
+          <div class="divider"></div>
+          <h1>Меню</h1>
+        </div>
+        <ul>
+          <li class="menu-item down-border" id="main-side">
+            <div class="defis"></div>
+            Главная
+          </li>
+          <li class="menu-item down-border" id="search-group-side">
+            <div class="defis"></div>
+            Поиск группы
+          </li>
+          <li class="menu-item down-border" id="audience-search-side">
+            <div class="defis"></div>
+            Поиск аудитории
+          </li>
+          <li class="menu-item creative-up" id="create-group-side">
+            <div class="defis"></div>
+            Создать группу
+          </li>
+          <li class="menu-item down-border creative-down" id="your-groups-side">
+            <div class="defis"></div>
+            Мои группы
+          </li>
+          <!-- <li class="menu-item">
+            <div class="defis"></div>
+            Размер шрифта
+          </li> -->
+        </ul>
+
+        <!-- <div class="slider">
+          <input type="range" class="win10-thumb" id="font-size-slider" />
+        </div> -->
+
+        <!-- <h3 class="example-text down-border">Hello world</h3> -->
+        <!-- 
+        <div class="theme">
+          <div class="text">
+            <h3>Тема</h3>
+          </div>
+
+          <div class="toggle-switch">
+            <label>
+              <input type="checkbox" id="theme-slider" />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div> -->
+
+        <div class="share-button-container">
+          <div class="share-variants" id="share-variants">
+            <img
+              class="tg"
+              src="/static/img/share/tg-img.svg"
+              alt=""
+              i="tg-share"
+            />
+          </div>
+          <button id="share-btn">
+            <img
+              class="share-img"
+              src="/static/img/share.svg"
+              alt=""
+            />Пригласить
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Заголовок страницы -->
+    <section class="header">
+      <div class="container">
+        <!-- Кнопка бокового меню -->
+        <img
+          class="open-menu-button"
+          src="/static/img/menu-button.svg"
+          alt="открыть боковое меню"
+        />
+        <h2><span class="bold">GOLANG</span> DEVELOPER</h2>
+        <div class="divider"></div>
+        <h1><span class="bold">SHARAGA</span> BOT</h1>
+
+        <!-- Горизонтальное меню -->
+        <div class="scroll-menu" id="scroll-menu">
+          <ul class="scroll-menu-ul">
+            <li class="" id="audience-search">поиск аудитории</li>
+            <li class="selected" id="main">главная</li>
+            <li class="" id="search-group-menu">поиск группы</li>
+            <li class="" id="your-groups">мои группы</li>
+            <li class="" id="create-group">создать группу</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Слайдер -->
+    <div class="slider-container">
+      <div class="slider-wrapper">
+        <!-- Поиск аудитории -->
+        <section class="slider-section search-audience">
+          <!-- ... (search audience content) ... -->
+          <div class="container">
+            <div class="search-input-container">
+              <img
+                id="search-audience-img"
+                src="/static/img/search-group/searchr-ico.svg"
+                alt=""
+              />
+              <input
+                type="text"
+                placeholder="поиск аудитории"
+                name="search-audience"
+                id="search-audience"
+                disabled
+              />
+            </div>
+
+            <div class="in-progress">
+              <h3>Отдел находится в разработке</h3>
+            </div>
+          </div>
+        </section>
+
+        <!-- Главная -->
+        <section class="slider-section main">
+          <!-- ... (main content) ... -->
+          <div class="container">
+            <h2>Привет, {{.FirstName}}!</h2>
+
+            <dialog class="dialog" id="search-dialog">
+              <h3>
+                Введите номер аудитории и получите подробный маршрут до нее.
+              </h3>
+              <img
+                onclick="document.getElementById('search-dialog').close()"
+                src="/static/img/krestik.svg"
+                alt=""
+                class="close-modal"
+              />
+            </dialog>
+            <button class="button-card search">
+              Поиск аудитории
+              <button
+                onclick="document.getElementById('search-dialog').showModal()"
+                class="button-hint"
+              >
+                ?
+              </button>
+            </button>
+
+            <dialog class="dialog" id="join-group-dialog">
+              <h3>
+                Найдите свою учебную группу, вступите в нее и получайте
+                расписание занятий прямо в боте
+              </h3>
+              <img
+                onclick="document.getElementById('join-group-dialog').close()"
+                src="/static/img/krestik.svg"
+                alt=""
+                class="close-modal"
+              />
+            </dialog>
+            <button class="button-card search">
+              Поиск группы
+              <button
+                onclick="document.getElementById('join-group-dialog').showModal()"
+                class="button-hint hint-join-group"
+              >
+                ?
+              </button>
+            </button>
+
+            <dialog class="dialog" id="yours-group-dialog">
+              <h3>
+                Просматривайте, редактируйте или удаляйте свои группы (до 5
+                групп на пользователя).
+              </h3>
+              <img
+                onclick="document.getElementById('yours-group-dialog').close()"
+                src="/static/img/krestik.svg"
+                alt=""
+                class="close-modal"
+              />
+            </dialog>
+            <button class="button-card my-groups">
+              Мои группы
+              <button
+                onclick="document.getElementById('yours-group-dialog').showModal()"
+                class="button-hint"
+              >
+                ?
+              </button>
+            </button>
+
+            <dialog class="dialog" id="create-group-dialog">
+              <h3>
+                Создайте новую группу и составьте для нее расписание занятий.
+              </h3>
+              <img
+                onclick="document.getElementById('create-group-dialog').close()"
+                src="/static/img/krestik.svg"
+                alt=""
+                class="close-modal"
+              />
+            </dialog>
+            <button class="button-card create-group">
+              Создать группу
+              <button
+                onclick="document.getElementById('create-group-dialog').showModal()"
+                class="button-hint"
+              >
+                ?
+              </button>
+            </button>
+          </div>
+        </section>
+
+        <!-- Поиск группы -->
+        <section class="slider-section search-group">
+          <!-- Вы уже в составе группы. -->
+          <dialog class="join-group-dialog" id="join-group-dialog-action">
+            <h3>
+              Вы уже находитесь в группе<br />
+              <span class="bold" id="old-join-group-name">21-САИ</span><br />
+              Вступить в
+              <span class="bold" id="new-join-group-name">РСО-20</span>?
+            </h3>
+            <button id="joint-btn">Вступить</button>
+            <img
+              onclick="document.getElementById('join-group-dialog-action').close()"
+              src="/static/img/krestik.svg"
+              alt=""
+              class="close-modal"
+            />
+          </dialog>
+
+          <!-- Поиск и список группы -->
+          <div class="container">
+            <div class="search-input-container">
+              <img
+                id="search-group-img"
+                src="/static/img/search-group/searchr-ico.svg"
+                alt=""
+              />
+              <input
+                type="text"
+                placeholder="поиск группы"
+                name="search-group"
+                id="search-group"
+              />
+            </div>
+            <section class="groups" id="cards-placeholder">
+              <!-- КАРТОЧКИ -->
+              <div class="group-card" groud-id="0">
+                <!-- Статус, что пользователь вступил -->
+                <img class="member-img" src="/static/img/member.svg" alt="" />
+                <h2 class="group-name">ИТ-22</h2>
+                <div class="divider"></div>
+                <h2 class="desc">Будущие IT-гении</h2>
+                <button class="join-group">Вступить</button>
+              </div>
+              <!-- КАРТОЧКИ -->
+            </section>
+          </div>
+
+          <!-- Расписание группы на которую ткнули -->
+          <div class="container schedule-container">
+            <!-- Кнопки для вступления или выхода -->
+            <button class="join-exit-button">Вступить</button>
+
+            <!-- Карточка с базовой информацией -->
+            <div class="base-info">
+              <!-- Диалог -->
+              <dialog class="dialog" id="base-info-dialog">
+                <h3>
+                  <span class="bold">Имя группы:</span> до 20 символов, должно
+                  быть уникальным.<br /><br /><span class="bold"
+                    >Подпись группы:</span
+                  >
+                  необязательное дополнительное описание. Используется при
+                  поиске. <br /><br /><span class="bold">Важно:</span>
+                  Группы с неприемлемым содержанием будут удалены.
+                </h3>
+                <img
+                  onclick="document.getElementById('base-info-dialog').close()"
+                  src="/static/img/krestik.svg"
+                  alt=""
+                  class="close-modal"
+                />
+              </dialog>
+
+              <!-- Кнопка открытия диалога -->
+              <button
+                onclick="document.getElementById('base-info-dialog').showModal()"
+                class="button-hint hint-join-group"
+              >
+                ?
+              </button>
+
+              <h3>Имя группы</h3>
+              <input class="" type="text" placeholder="Имя" disabled />
+              <h3 class="second-h3">Подпись группы</h3>
+              <input
+                class="second-input"
+                type="text"
+                placeholder="Подпись"
+                disabled
+              />
+            </div>
+
+            <!-- Карточка от чредования недель -->
+            <div class="even-info">
+              <!-- Диалог -->
+              <dialog class="dialog" id="even-dialog">
+                <h3>
+                  <span class="bold">Чередование недель:</span> возможность
+                  заполнить расписание для четной и нечетной недели.<br /><br />
+                  <span class="bold">Точка отсчета:</span> понедельник нечетной
+                  недели.<br /><br />
+                  <span class="bold">Важно:</span> Группы с неприемлемым
+                  содержанием будут удалены.
+                </h3>
+                <img
+                  onclick="document.getElementById('even-dialog').close()"
+                  src="/static/img/krestik.svg"
+                  alt=""
+                  class="close-modal"
+                />
+              </dialog>
+
+              <!-- Кнопка открытия диалога -->
+              <button
+                onclick="document.getElementById('even-dialog').showModal()"
+                class="button-hint hint-join-group"
+              >
+                ?
+              </button>
+              <div class="horizontal">
+                <h3>Чередование недель</h3>
+                <label class="custom-checkbox">
+                  <input
+                    type="checkbox"
+                    name="is-emergency"
+                    id="is-emergency"
+                    disabled
+                  />
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div class="date-input-container" id="dateInputContainer">
+                <h3 class="monday-odd">Укажите точку отсчета</h3>
+                <input type="date" name="even-start" id="even-start" disabled />
+              </div>
+            </div>
+
+            <!-- Создание расписания -->
+            <div class="schedule">
+              <h3 class="title">Расписание</h3>
+              <div class="horizontal" id="week-selector">
+                <button class="week-button selected" id="even-week">
+                  четная неделя
+                </button>
+                <button class="week-button" id="odd-week">
+                  нечетная неделя
+                </button>
+                <button
+                  class="week-button"
+                  id="all-schedule"
+                  style="display: none"
+                >
+                  все расписание
+                </button>
+                <div class="selection-indicator"></div>
+              </div>
+
+              <!-- Четная неделя -->
+              <div class="even-week-schedule table-schedule">
+                <h3 class="title-week">Четная неделя</h3>
+
+                <!-- Понедельник -->
+                <div class="week-day" id="even-week-0">
+                  <div class="day-header">
+                    <h3>Понедельник</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content"></div>
+                </div>
+
+                <!-- Вторник -->
+                <div class="week-day" id="even-week-1">
+                  <div class="day-header">
+                    <h3>Вторник</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table></table>
+                  </div>
+                </div>
+
+                <!-- Среда -->
+                <div class="week-day" id="even-week-2">
+                  <div class="day-header">
+                    <h3>Среда</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table></table>
+                  </div>
+                </div>
+
+                <!-- Четверг -->
+                <div class="week-day" id="even-week-3">
+                  <div class="day-header">
+                    <h3>Четверг</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Пятница -->
+                <div class="week-day" id="even-week-4">
+                  <div class="day-header">
+                    <h3>Пятница</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Суббота -->
+                <div class="week-day" id="even-week-5">
+                  <div class="day-header">
+                    <h3>Суббота</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Воскресенье -->
+                <div class="week-day" id="even-week-6">
+                  <div class="day-header">
+                    <h3>Воскресенье</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Нечетная неделя -->
+              <div
+                class="odd-week-schedule table-schedule"
+                style="display: none"
+              >
+                <h3 class="title-week">Нечетная неделя</h3>
+
+                <!-- Понедельник -->
+                <div class="week-day" id="odd-week-0">
+                  <div class="day-header">
+                    <h3>Понедельник</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Вторник -->
+                <div class="week-day" id="odd-week-1">
+                  <div class="day-header">
+                    <h3>Вторник</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Среда -->
+                <div class="week-day" id="odd-week-2">
+                  <div class="day-header">
+                    <h3>Среда</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Четверг -->
+                <div class="week-day" id="odd-week-3">
+                  <div class="day-header">
+                    <h3>Четверг</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Пятница -->
+                <div class="week-day" id="odd-week-4">
+                  <div class="day-header">
+                    <h3>Пятница</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Суббота -->
+                <div class="week-day" id="odd-week-5">
+                  <div class="day-header">
+                    <h3>Суббота</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Воскресенье -->
+                <div class="week-day" id="odd-week-6">
+                  <div class="day-header">
+                    <h3>Воскресенье</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <!-- Конец создания расписания -->
+            </div>
+
+            <button class="save-schedule" id="save-schedule">
+              <img src="/static/img/exit.svg" alt="" />
+              В меню
+            </button>
+            <div class="empty-space"></div>
+            <!-- Конец -->
+          </div>
+
+          <!-- Конец -->
+        </section>
+
+        <!-- Ваши группы -->
+        <section class="slider-section yours-group">
+          <div class="container">
+            <div class="search-input-container">
+              <img
+                id="search-yours-group-img"
+                src="/static/img/search-group/searchr-ico.svg"
+                alt=""
+              />
+              <input
+                type="text"
+                placeholder="поиск группы"
+                name="search-yours-group"
+                id="search-yours-group"
+              />
+            </div>
+          </div>
+
+          <div class="container schedule-container">
+            <!-- Карточка с вводом базовой информации -->
+            <div class="base-info">
+              <!-- Диалог -->
+              <dialog class="dialog" id="base-info-dialog">
+                <h3>
+                  <span class="bold">Имя группы:</span> до 20 символов, должно
+                  быть уникальным.<br /><br /><span class="bold"
+                    >Подпись группы:</span
+                  >
+                  необязательное дополнительное описание. Используется при
+                  поиске. <br /><br /><span class="bold">Важно:</span>
+                  Группы с неприемлемым содержанием будут удалены.
+                </h3>
+                <img
+                  onclick="document.getElementById('base-info-dialog').close()"
+                  src="/static/img/krestik.svg"
+                  alt=""
+                  class="close-modal"
+                />
+              </dialog>
+
+              <!-- Кнопка открытия диалога -->
+              <button
+                onclick="document.getElementById('base-info-dialog').showModal()"
+                class="button-hint hint-join-group"
+              >
+                ?
+              </button>
+
+              <h3>Имя группы*</h3>
+              <input class="" type="text" placeholder="Имя" />
+              <h3 class="second-h3">Подпись группы</h3>
+              <input class="second-input" type="text" placeholder="Подпись" />
+            </div>
+
+            <!-- Карточка от чредования недель -->
+            <div class="even-info">
+              <!-- Диалог -->
+              <dialog class="dialog" id="even-dialog">
+                <h3>
+                  <span class="bold">Чередование недель:</span> возможность
+                  заполнить расписание для четной и нечетной недели.<br /><br />
+                  <span class="bold">Точка отсчета:</span> понедельник нечетной
+                  недели.<br /><br />
+                  <span class="bold">Важно:</span> Группы с неприемлемым
+                  содержанием будут удалены.
+                </h3>
+                <img
+                  onclick="document.getElementById('even-dialog').close()"
+                  src="/static/img/krestik.svg"
+                  alt=""
+                  class="close-modal"
+                />
+              </dialog>
+
+              <!-- Кнопка открытия диалога -->
+              <button
+                onclick="document.getElementById('even-dialog').showModal()"
+                class="button-hint hint-join-group"
+              >
+                ?
+              </button>
+              <div class="horizontal">
+                <h3>Чередование недель</h3>
+                <label class="custom-checkbox">
+                  <input
+                    type="checkbox"
+                    name="is-emergency"
+                    id="is-emergency"
+                  />
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div class="date-input-container" id="dateInputContainer">
+                <h3 class="monday-odd">Укажите точку отсчета</h3>
+                <input type="date" name="even-start" id="even-start" />
+              </div>
+            </div>
+
+            <!-- Создание расписания -->
+            <div class="schedule">
+              <h3 class="title">Расписание</h3>
+              <div class="horizontal" id="week-selector">
+                <button class="week-button selected" id="even-week">
+                  четная неделя
+                </button>
+                <button class="week-button" id="odd-week">
+                  нечетная неделя
+                </button>
+                <button
+                  class="week-button"
+                  id="all-schedule"
+                  style="display: none"
+                >
+                  все расписание
+                </button>
+                <div class="selection-indicator"></div>
+              </div>
+
+              <!-- Четная неделя -->
+              <div class="even-week-schedule table-schedule">
+                <h3 class="title-week">Четная неделя</h3>
+
+                <!-- Понедельник -->
+                <div class="week-day" id="even-week-0">
+                  <div class="day-header">
+                    <h3>Понедельник</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <button class="add-subject" id="add-even-week-0">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Вторник -->
+                <div class="week-day" id="even-week-1">
+                  <div class="day-header">
+                    <h3>Вторник</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table></table>
+                    <button class="add-subject" id="add-even-week-1">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Среда -->
+                <div class="week-day" id="even-week-2">
+                  <div class="day-header">
+                    <h3>Среда</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table></table>
+                    <button class="add-subject" id="add-even-week-2">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Четверг -->
+                <div class="week-day" id="even-week-3">
+                  <div class="day-header">
+                    <h3>Четверг</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                    <button class="add-subject" id="add-even-week-3">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Пятница -->
+                <div class="week-day" id="even-week-4">
+                  <div class="day-header">
+                    <h3>Пятница</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                    <button class="add-subject" id="add-even-week-4">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Суббота -->
+                <div class="week-day" id="even-week-5">
+                  <div class="day-header">
+                    <h3>Суббота</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                    <button class="add-subject" id="add-even-week-5">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Воскресенье -->
+                <div class="week-day" id="even-week-6">
+                  <div class="day-header">
+                    <h3>Воскресенье</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                    <button class="add-subject" id="add-even-week-6">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Нечетная неделя -->
+              <div
+                class="odd-week-schedule table-schedule"
+                style="display: none"
+              >
+                <h3 class="title-week">Нечетная неделя</h3>
+
+                <!-- Понедельник -->
+                <div class="week-day" id="odd-week-0">
+                  <div class="day-header">
+                    <h3>Понедельник</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                    <button class="add-subject" id="add-odd-week-0">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Вторник -->
+                <div class="week-day" id="odd-week-1">
+                  <div class="day-header">
+                    <h3>Вторник</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                    <button class="add-subject" id="add-odd-week-1">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Среда -->
+                <div class="week-day" id="odd-week-2">
+                  <div class="day-header">
+                    <h3>Среда</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                    <button class="add-subject" id="add-odd-week-2">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Четверг -->
+                <div class="week-day" id="odd-week-3">
+                  <div class="day-header">
+                    <h3>Четверг</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                    <button class="add-subject" id="add-odd-week-3">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Пятница -->
+                <div class="week-day" id="odd-week-4">
+                  <div class="day-header">
+                    <h3>Пятница</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                    <button class="add-subject" id="add-odd-week-4">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Суббота -->
+                <div class="week-day" id="odd-week-5">
+                  <div class="day-header">
+                    <h3>Суббота</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                    <button class="add-subject" id="add-odd-week-5">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Воскресенье -->
+                <div class="week-day" id="odd-week-6">
+                  <div class="day-header">
+                    <h3>Воскресенье</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                    <button class="add-subject" id="add-odd-week-6">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <!-- Конец создания расписания -->
+            </div>
+
+            <button class="save-schedule" id="save-schedule">
+              <img src="/static/img/save.svg" alt="" />
+              Сохранить
+            </button>
+            <div class="empty-space"></div>
+            <!-- Конец -->
+          </div>
+        </section>
+
+        <!-- Создание расписания -->
+        <section class="slider-section create-shedule">
+          <div class="container schedule-container">
+            <!-- Карточка с вводом базовой информации -->
+            <div class="base-info">
+              <!-- Диалог -->
+              <dialog class="dialog" id="base-info-dialog">
+                <h3>
+                  <span class="bold">Имя группы:</span> до 20 символов, должно
+                  быть уникальным.<br /><br /><span class="bold"
+                    >Подпись группы:</span
+                  >
+                  необязательное дополнительное описание. Используется при
+                  поиске. <br /><br /><span class="bold">Важно:</span>
+                  Группы с неприемлемым содержанием будут удалены.
+                </h3>
+                <img
+                  onclick="document.getElementById('base-info-dialog').close()"
+                  src="/static/img/krestik.svg"
+                  alt=""
+                  class="close-modal"
+                />
+              </dialog>
+
+              <!-- Кнопка открытия диалога -->
+              <button
+                onclick="document.getElementById('base-info-dialog').showModal()"
+                class="button-hint hint-join-group"
+              >
+                ?
+              </button>
+
+              <h3>Имя группы*</h3>
+              <input class="" type="text" placeholder="Имя" />
+              <h3 class="second-h3">Подпись группы</h3>
+              <input class="second-input" type="text" placeholder="Подпись" />
+            </div>
+
+            <!-- Карточка от чредования недель -->
+            <div class="even-info">
+              <!-- Диалог -->
+              <dialog class="dialog" id="even-dialog">
+                <h3>
+                  <span class="bold">Чередование недель:</span> возможность
+                  заполнить расписание для четной и нечетной недели.<br /><br />
+                  <span class="bold">Точка отсчета:</span> понедельник нечетной
+                  недели.<br /><br />
+                  <span class="bold">Важно:</span> Группы с неприемлемым
+                  содержанием будут удалены.
+                </h3>
+                <img
+                  onclick="document.getElementById('even-dialog').close()"
+                  src="/static/img/krestik.svg"
+                  alt=""
+                  class="close-modal"
+                />
+              </dialog>
+
+              <!-- Кнопка открытия диалога -->
+              <button
+                onclick="document.getElementById('even-dialog').showModal()"
+                class="button-hint hint-join-group"
+              >
+                ?
+              </button>
+              <div class="horizontal">
+                <h3>Чередование недель</h3>
+                <label class="custom-checkbox">
+                  <input
+                    type="checkbox"
+                    name="is-emergency"
+                    id="is-emergency"
+                  />
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div class="date-input-container" id="dateInputContainer">
+                <h3 class="monday-odd">Укажите точку отсчета</h3>
+                <input type="date" name="even-start" id="even-start" />
+              </div>
+            </div>
+
+            <!-- Создание расписания -->
+            <div class="schedule">
+              <h3 class="title">Расписание</h3>
+              <div class="horizontal" id="week-selector">
+                <button class="week-button selected" id="even-week">
+                  четная неделя
+                </button>
+                <button class="week-button" id="odd-week">
+                  нечетная неделя
+                </button>
+                <button
+                  class="week-button"
+                  id="all-schedule"
+                  style="display: none"
+                >
+                  все расписание
+                </button>
+                <div class="selection-indicator"></div>
+              </div>
+
+              <!-- Четная неделя -->
+              <div class="even-week-schedule table-schedule">
+                <h3 class="title-week">Четная неделя</h3>
+
+                <!-- Понедельник -->
+                <div class="week-day" id="even-week-0">
+                  <div class="day-header">
+                    <h3>Понедельник</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <button class="add-subject" id="add-even-week-0">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Вторник -->
+                <div class="week-day" id="even-week-1">
+                  <div class="day-header">
+                    <h3>Вторник</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table></table>
+                    <button class="add-subject" id="add-even-week-1">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Среда -->
+                <div class="week-day" id="even-week-2">
+                  <div class="day-header">
+                    <h3>Среда</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table></table>
+                    <button class="add-subject" id="add-even-week-2">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Четверг -->
+                <div class="week-day" id="even-week-3">
+                  <div class="day-header">
+                    <h3>Четверг</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                    <button class="add-subject" id="add-even-week-3">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Пятница -->
+                <div class="week-day" id="even-week-4">
+                  <div class="day-header">
+                    <h3>Пятница</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                    <button class="add-subject" id="add-even-week-4">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Суббота -->
+                <div class="week-day" id="even-week-5">
+                  <div class="day-header">
+                    <h3>Суббота</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                    <button class="add-subject" id="add-even-week-5">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Воскресенье -->
+                <div class="week-day" id="even-week-6">
+                  <div class="day-header">
+                    <h3>Воскресенье</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                    <button class="add-subject" id="add-even-week-6">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Нечетная неделя -->
+              <div
+                class="odd-week-schedule table-schedule"
+                style="display: none"
+              >
+                <h3 class="title-week">Нечетная неделя</h3>
+
+                <!-- Понедельник -->
+                <div class="week-day" id="odd-week-0">
+                  <div class="day-header">
+                    <h3>Понедельник</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                    <button class="add-subject" id="add-odd-week-0">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Вторник -->
+                <div class="week-day" id="odd-week-1">
+                  <div class="day-header">
+                    <h3>Вторник</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                    <button class="add-subject" id="add-odd-week-1">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Среда -->
+                <div class="week-day" id="odd-week-2">
+                  <div class="day-header">
+                    <h3>Среда</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                    <button class="add-subject" id="add-odd-week-2">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Четверг -->
+                <div class="week-day" id="odd-week-3">
+                  <div class="day-header">
+                    <h3>Четверг</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                    <button class="add-subject" id="add-odd-week-3">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Пятница -->
+                <div class="week-day" id="odd-week-4">
+                  <div class="day-header">
+                    <h3>Пятница</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                    <button class="add-subject" id="add-odd-week-4">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Суббота -->
+                <div class="week-day" id="odd-week-5">
+                  <div class="day-header">
+                    <h3>Суббота</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                    <button class="add-subject" id="add-odd-week-5">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Воскресенье -->
+                <div class="week-day" id="odd-week-6">
+                  <div class="day-header">
+                    <h3>Воскресенье</h3>
+                    <button class="toggle-day">
+                      <img src="/static/img/arrow.svg" alt="" />
+                    </button>
+                  </div>
+                  <div class="day-content">
+                    <table>
+                      <!-- Пустая таблица -->
+                    </table>
+                    <button class="add-subject" id="add-odd-week-6">
+                      + добавить запись
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <!-- Конец создания расписания -->
+            </div>
+
+            <button class="save-schedule" id="save-schedule">
+              <img src="/static/img/save.svg" alt="" />
+              Сохранить
+            </button>
+            <div class="empty-space"></div>
+            <!-- Конец -->
+          </div>
+        </section>
+        <!-- Конец -->
+      </div>
+    </div>
+  </body>
+</html>
+
+{{end}}
+{{template "main" .}}

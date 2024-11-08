@@ -1,0 +1,64 @@
+/* Слайдер переключения темы */
+.theme {
+  display: flex;
+  align-items: center;
+
+  h3 {
+    font-size: 6.3vw;
+    margin: 0;
+    padding: 0;
+    transform: translateY(4.7vw); /* Опускаем текст на 1.5vw */
+  }
+
+  .toggle-switch {
+    position: relative;
+    width: 19.12vw;
+    margin-left: 5vw; /* Отступ слева */
+  }
+
+  label {
+    position: absolute;
+    width: 100%;
+    height: 9.56vw;
+    background-color: var(--dark);
+    border-radius: 4.78vw;
+    cursor: pointer;
+  }
+
+  input {
+    position: absolute;
+    display: none;
+  }
+
+  .slider {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 4.78vw;
+    transition: 0.3s;
+  }
+
+  input:checked ~ .slider {
+    background-color: var(--light);
+  }
+
+  .slider::before {
+    content: "";
+    position: absolute;
+    top: 1.25vw;
+    left: 1.53vw;
+    width: 7.16vw;
+    height: 7.16vw;
+    border-radius: 50%;
+    box-shadow: inset 2.68vw -0.38vw 0px 0px var(--light);
+    background-color: var(--dark);
+    transition: 0.3s;
+  }
+
+  input:checked ~ .slider::before {
+    transform: translateX(9.09vw);
+    background-color: var(--dark);
+    box-shadow: none;
+  }
+}
+/*  */

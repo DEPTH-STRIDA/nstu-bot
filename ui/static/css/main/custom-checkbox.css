@@ -1,0 +1,40 @@
+/* Кастомный чекбокс */
+.custom-checkbox {
+  position: relative;
+  display: inline-block;
+  width: 7vw;
+  height: 7vw;
+  margin-left: 4vw;
+}
+
+.custom-checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 7vw;
+  height: 7vw;
+  background-color: #222222;
+  border: 0.6vw solid white;
+  border-radius: 1vw;
+}
+
+.custom-checkbox input:checked ~ .checkmark:after {
+  content: "";
+  position: absolute;
+  display: block;
+  left: 2.2vw;
+  top: 0.5vw;
+  width: 2vw;
+  height: 4vw;
+  border: solid white;
+  border-width: 0 0.6vw 0.6vw 0;
+  transform: rotate(45deg);
+}
