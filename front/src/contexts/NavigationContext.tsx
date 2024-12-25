@@ -9,6 +9,11 @@ const NavigationContext = createContext<NavigationContextType | undefined>(
   undefined
 );
 
+/**
+ * Контекст навигации приложения.
+ * Предоставляет глобальное состояние для управления активной страницей
+ * и возможность переключения между страницами из любого компонента.
+ */
 export const NavigationProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {

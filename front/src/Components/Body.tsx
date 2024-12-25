@@ -1,6 +1,12 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigation } from "../contexts/NavigationContext";
+import { SearchRoom, Main, SearchGroup, MyGroups, CreateGroup } from "../Pages";
 
+/**
+ * Основной компонент контента.
+ * Управляет отображением страниц и свайп-навигацией между ними.
+ * Синхронизируется с верхним меню для отображения активной страницы.
+ */
 const Body = () => {
   const { activePage, setActivePage } = useNavigation();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -14,7 +20,7 @@ const Body = () => {
     "поиск аудитории",
     "главная",
     "поиск группы",
-    "ваши группы",
+    "мои группы",
     "создать группу",
   ];
 
@@ -126,27 +132,11 @@ const Body = () => {
       >
         {menuItems.map((_, index) => (
           <div key={index} className="h-full min-w-full overflow-y-auto">
-            {index === 0 && (
-              <div className="h-[3000px] w-full bg-red-200 p-4">
-                Поиск аудитории
-              </div>
-            )}
-            {index === 1 && (
-              <div className="h-[3000px] w-full bg-blue-200 p-4">Главная</div>
-            )}
-            {index === 2 && (
-              <div className="h-full w-full bg-green-200 p-4">Поиск группы</div>
-            )}
-            {index === 3 && (
-              <div className="h-[3000px] w-full bg-yellow-200 p-4">
-                Ваши группы
-              </div>
-            )}
-            {index === 4 && (
-              <div className="h-full w-full bg-purple-200 p-4">
-                Создать группу
-              </div>
-            )}
+            {index === 0 && <SearchRoom />}
+            {index === 1 && <Main />}
+            {index === 2 && <SearchGroup />}
+            {index === 3 && <MyGroups />}
+            {index === 4 && <CreateGroup />}
           </div>
         ))}
       </div>
