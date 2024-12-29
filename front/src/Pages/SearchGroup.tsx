@@ -7,7 +7,7 @@ import SearchBar from "../Components/SearchBar";
 const SearchGroup = () => {
   return (
     <div className=" w-full bg-white flex flex-col justify-start items-center pt-[15px]">
-      <SearchBar placeholder="Введите название группы" onChange={() => {}} />
+      <SearchBar placeholder="Поиск группы" onChange={() => {}} />
     </div>
   );
 };
