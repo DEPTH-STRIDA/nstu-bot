@@ -12,7 +12,7 @@ const GroupCard: React.FC<GroupCardProps> = ({ name, text, textButton, consist }
   const truncatedText = text.length > 110 ? text.slice(0, 110) + '...' : text;
 
   return (
-    <div className="w-full max-w-[264px] bg-primary rounded-[15px] p-3 text-center relative">
+    <div className="w-full w-[264px] bg-primary rounded-[15px] p-3 text-center relative">
       {consist && (
         <div className="absolute right-2 top-2 w-[22px] h-[22px]">
           <img

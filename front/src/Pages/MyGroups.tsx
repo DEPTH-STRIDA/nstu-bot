@@ -8,7 +8,18 @@ import SearchBar from "../Components/SearchBar";
 const MyGroups = () => {
   return (
     <div className=" w-full bg-white flex flex-col justify-start items-center pt-[15px]">
-      <SearchBar placeholder="Поиск группы" onChange={() => {}} />
+      <SearchBar
+        smallMargin={true}
+        placeholder="Поиск группы"
+        onChange={() => {}}
+      />
+
+      <button
+        className="w-[264px] bg-primary 
+      text-secondary text-[20px] font-roboto font-light rounded-[12px] py-[6px] mb-[19px]"
+      >
+        + Создать группу
+      </button>
 
       <div className="flex flex-col justify-start items-center gap-[18px] w-full">
         <GroupCard
