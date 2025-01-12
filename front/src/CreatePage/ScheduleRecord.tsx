@@ -6,9 +6,23 @@ interface ScheduleRecordProps {
   index: number;
   isEven?: boolean;
   inputClassName?: string;
+  onDelete?: () => void;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
+  canMoveUp?: boolean;
+  canMoveDown?: boolean;
 }
 
-const ScheduleRecord = ({ index, isEven = false, inputClassName = "" }: ScheduleRecordProps) => {
+const ScheduleRecord = ({ 
+  index, 
+  isEven = false, 
+  inputClassName = "",
+  onDelete,
+  onMoveUp,
+  onMoveDown,
+  canMoveUp = true,
+  canMoveDown = true
+}: ScheduleRecordProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
@@ -53,9 +67,41 @@ const ScheduleRecord = ({ index, isEven = false, inputClassName = "" }: Schedule
           transformOrigin: 'left center'
         }}
       >
-        <img src={arrow_up} alt="Вверх" className="w-[44px] h-[44px] cursor-pointer" />
-        <img src={delete_button} alt="Удалить" className="w-[44px] h-[44px] cursor-pointer" />
-        <img src={arrow_down} alt="Вниз" className="w-[44px] h-[44px] cursor-pointer" />
+        <img 
+          src={arrow_up} 
+          alt="Вверх" 
+          className={`w-[44px] h-[44px] cursor-pointer transition-opacity duration-200
+          ${canMoveUp ? 'hover:opacity-80' : 'opacity-50 cursor-not-allowed'}`}
+          onClick={() => {
+            if (canMoveUp && onMoveUp) {
+              onMoveUp();
+              setIsMenuOpen(false);
+            }
+          }}
+        />
+        <img 
+          src={delete_button} 
+          alt="Удалить" 
+          className="w-[44px] h-[44px] cursor-pointer hover:opacity-80 transition-opacity duration-200"
+          onClick={() => {
+            if (onDelete) {
+              onDelete();
+              setIsMenuOpen(false);
+            }
+          }}
+        />
+        <img 
+          src={arrow_down} 
+          alt="Вниз" 
+          className={`w-[44px] h-[44px] cursor-pointer transition-opacity duration-200
+          ${canMoveDown ? 'hover:opacity-80' : 'opacity-50 cursor-not-allowed'}`}
+          onClick={() => {
+            if (canMoveDown && onMoveDown) {
+              onMoveDown();
+              setIsMenuOpen(false);
+            }
+          }}
+        />
       </div>,
       document.body
     );
