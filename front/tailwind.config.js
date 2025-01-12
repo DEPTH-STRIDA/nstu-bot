@@ -7,6 +7,7 @@ export default {
         primary: "#1E1E1E",
         secondary: "#FFFFFF",
         inputBg: "#F2F2F2",
+        weekDayBg:"#E2E2E2",
       },
       boxShadow: {
         activeMenu: "0px 0px 8px rgba(255, 255, 255, 0.5)",

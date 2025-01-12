@@ -39,7 +39,7 @@ const AlternationCard = ({
   };
 
   return (
-    <div className="bg-primary w-[320px] py-[35px] px-[20px] rounded-[15px] relative">
+    <div className="bg-primary w-[320px] py-[35px] px-[20px] rounded-[15px] relative mt-[24px]">
       <div
         className="absolute right-[7px] top-[4px] w-[25px] h-[25px] cursor-pointer
         before:content-[''] before:absolute before:-inset-3 before:cursor-pointer"

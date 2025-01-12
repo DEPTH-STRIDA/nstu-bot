@@ -88,7 +88,7 @@ const Nav = () => {
               onButtonClick={handleButtonClick}
             />
             <div
-              className="absolute bottom-[11px] h-[2px] bg-secondary shadow-activeMenu transition-all duration-300 ease-in-out"
+              className="absolute bottom-[16px] h-[2px] bg-secondary shadow-activeMenu transition-all duration-300 ease-in-out"
               style={{
                 left: `${activeButtonLeft}px`,
                 width: `${activeButtonWidth}px`,

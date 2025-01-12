@@ -21,7 +21,7 @@ const MyGroups = () => {
         + Создать группу
       </button>
 
-      <div className="flex flex-col justify-start items-center gap-[18px] w-full">
+      <div className="flex flex-col justify-start items-center gap-[18px] w-[270px]">
         <GroupCard
           name="Группа 1"
           text="Описание группы 1"

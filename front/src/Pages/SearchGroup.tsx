@@ -9,7 +9,7 @@ const SearchGroup = () => {
   return (
     <div className=" w-full bg-white flex flex-col justify-start items-center pt-[15px]">
       <SearchBar placeholder="Поиск группы" onChange={() => {}} />
-      <div className="flex flex-col justify-start items-center gap-[18px] w-full">
+      <div className="flex flex-col justify-start items-center gap-[18px] w-[270px]">
         <GroupCard
           name="Группа 1"
           text="Описание группы 1"
